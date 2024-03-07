@@ -55,9 +55,6 @@ function SingleChat(props) {
         setMessages([...messages, newMessageRecieved]);
       }
     });
-    return () => {
-      socket.disconnect();
-    };
   });
   // console.log(notification, "=============");
   useEffect(() => {
