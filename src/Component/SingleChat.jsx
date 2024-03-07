@@ -31,7 +31,7 @@ function SingleChat(props) {
   const isWideScreen = useMediaQuery("(min-width:600px)");
   const { user, selectedChat, setSelectedChat, notification, setNotification } =
     ChatState();
-  const ENDPOINT = "http://localhost:80";
+  const ENDPOINT = "https://chatapp-backend-2mf4.onrender.com";
   var socket, selectedChatCompare;
   const [socketConnected, setSocketConnected] = useState(false);
 
