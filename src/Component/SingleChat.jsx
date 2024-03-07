@@ -54,7 +54,7 @@ function SingleChat(props) {
         setMessages([...messages, newMessageRecieved]);
       }
     });
-  }, [ENDPOINT, user.user, notification, messages]);
+  });
   console.log(notification, "=============");
   useEffect(() => {
     fetchMessages();
