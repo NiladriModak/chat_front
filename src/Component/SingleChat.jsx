@@ -39,23 +39,31 @@ function SingleChat(props) {
     socket = io(ENDPOINT);
     socket.emit("setup", user.user);
     socket.on("connected", () => setSocketConnected(true));
-    socket.on("message recieved", (newMessageRecieved) => {
-      const comp = localStorage.getItem("compare");
-      if (!comp || comp !== newMessageRecieved.chat._id) {
-        if (
-          !notification.some(
-            (item) => item.chat.chatName === newMessageRecieved.chat.chatName
-          )
-        ) {
-          setNotification([newMessageRecieved, ...notification]);
-          setfetchAgain(!fetchAgain);
+    if (socketConnected) {
+      socket.on("message recieved", (newMessageRecieved) => {
+        const comp = localStorage.getItem("compare");
+        if (comp !== newMessageRecieved.chat._id) {
+          if (
+            !notification.some(
+              (item) => item.chat.chatName === newMessageRecieved.chat.chatName
+            )
+          ) {
+            setNotification([newMessageRecieved, ...notification]);
+            setfetchAgain(!fetchAgain);
+          }
+        } else if (comp) {
+          console.log("came here");
+          setMessages([...messages, newMessageRecieved]);
+          fetchMessages();
         }
-      } else {
-        setMessages([...messages, newMessageRecieved]);
-      }
-    });
+      });
+    }
   });
-  console.log(notification, "=============");
+
+  // useEffect(() => {
+  //   fetchMessages();
+  // }, [messages]);
+
   useEffect(() => {
     fetchMessages();
     selectedChatCompare = selectedChat;
@@ -64,7 +72,7 @@ function SingleChat(props) {
 
   // useEffect(() => {
 
-  // }, []);
+  // });
 
   const handler = () => {
     setSelectedChat("");
@@ -79,8 +87,7 @@ function SingleChat(props) {
         },
       };
       setLoading(true);
-      // console.log(selectedChat);
-      // console.log(selectedChat._id);
+
       const { data } = await axios.get(
         `/api/message/${selectedChat._id}`,
         config
@@ -89,7 +96,6 @@ function SingleChat(props) {
       await setMessages(data);
 
       setLoading(false);
-      console.log(socket);
       socket.emit("join chat", selectedChat._id);
     } catch (error) {
       console.log(error);
@@ -98,7 +104,6 @@ function SingleChat(props) {
 
   const sendMessage = async () => {
     try {
-      // console.log("came", newMessages);
       if (newMessages) {
         const config = {
           headers: {
@@ -106,6 +111,9 @@ function SingleChat(props) {
             Authorization: `Bearer ${user.token}`,
           },
         };
+        // setTimeout(() => {
+        //   console.log("typing");
+        // }, 3000);
 
         const { data } = await axios.post(
           "/api/message/",
@@ -115,11 +123,10 @@ function SingleChat(props) {
           },
           config
         );
-        const p = data;
-        await setNewMessages("");
-        console.log(socket);
+
+        setNewMessages("");
         socket.emit("new message", data);
-        await setMessages([...messages, data]);
+        setMessages([...messages, data]);
       }
     } catch (error) {
       toast.error(error);

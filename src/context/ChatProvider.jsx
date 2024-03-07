@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 const ChatContext = createContext(null);
 const ChatProvider = (props) => {
   const [user, setUser] = useState();
+  // const [newsocket, setNewsocket] = useState();
   const [selectedChat, setSelectedChat] = useState();
   const [chats, setChats] = useState([]);
   const [notification, setNotification] = useState([]);
@@ -12,6 +13,7 @@ const ChatProvider = (props) => {
   const navigator = useNavigate();
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
     if (!userInfo) {
       navigator("/login");
     } else {
