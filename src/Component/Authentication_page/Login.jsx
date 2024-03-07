@@ -25,10 +25,8 @@ function Login() {
     }
     try {
       const config = {
-        headers: {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        },
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
       };
       const { data } = await axios.post(
         "/api/login",
