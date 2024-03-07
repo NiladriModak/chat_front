@@ -39,7 +39,7 @@ function SingleChat(props) {
     socket = io(ENDPOINT);
     socket.emit("setup", user.user);
     socket.on("connected", () => setSocketConnected(true));
-  });
+  }, [ENDPOINT, user.user]);
   console.log(notification, "=============");
   useEffect(() => {
     fetchMessages();
@@ -63,7 +63,7 @@ function SingleChat(props) {
         setMessages([...messages, newMessageRecieved]);
       }
     });
-  });
+  }, [notification, messages]);
 
   const handler = () => {
     setSelectedChat("");
