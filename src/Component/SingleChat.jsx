@@ -49,12 +49,12 @@ function SingleChat(props) {
             )
           ) {
             setNotification([newMessageRecieved, ...notification]);
-            // setfetchAgain(!fetchAgain);
+            setfetchAgain(!fetchAgain);
           }
         } else if (comp) {
           console.log("came here");
           setMessages([...messages, newMessageRecieved]);
-          fetchMessages();
+          // fetchMessages();
         }
       });
     }
