@@ -39,7 +39,15 @@ function SingleChat(props) {
     socket = io(ENDPOINT);
     socket.emit("setup", user.user);
     socket.on("connected", () => setSocketConnected(true));
+  });
+  console.log(notification, "=============");
+  useEffect(() => {
+    fetchMessages();
+    selectedChatCompare = selectedChat;
+    if (selectedChat) localStorage.setItem("compare", selectedChat._id);
+  }, [selectedChat]);
 
+  useEffect(() => {
     socket.on("message recieved", (newMessageRecieved) => {
       const comp = localStorage.getItem("compare");
       if (!comp || comp !== newMessageRecieved.chat._id) {
@@ -55,18 +63,7 @@ function SingleChat(props) {
         setMessages([...messages, newMessageRecieved]);
       }
     });
-  });
-  console.log(notification, "=============");
-  useEffect(() => {
-    fetchMessages();
-    selectedChatCompare = selectedChat;
-    if (selectedChat) localStorage.setItem("compare", selectedChat._id);
-  }, [selectedChat]);
-
-  // useEffect(() => {
-  //   if (!socket) return;
-
-  // });
+  }, []);
 
   const handler = () => {
     setSelectedChat("");
