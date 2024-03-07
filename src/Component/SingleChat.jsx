@@ -55,7 +55,7 @@ function SingleChat(props) {
       }
     });
   });
-  // console.log(notification, "=============");
+  console.log(notification, "=============");
   useEffect(() => {
     fetchMessages();
     selectedChatCompare = selectedChat;
