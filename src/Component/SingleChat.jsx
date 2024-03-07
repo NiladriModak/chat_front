@@ -39,7 +39,7 @@ function SingleChat(props) {
     socket = io(ENDPOINT);
     socket.emit("setup", user.user);
     socket.on("connected", () => setSocketConnected(true));
-  }, []);
+  });
   console.log(notification, "=============");
   useEffect(() => {
     fetchMessages();
