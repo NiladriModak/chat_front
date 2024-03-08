@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ChatState } from "../context/ChatProvider";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
@@ -31,16 +31,26 @@ function SingleChat(props) {
   const isWideScreen = useMediaQuery("(min-width:600px)");
   const { user, selectedChat, setSelectedChat, notification, setNotification } =
     ChatState();
-  const ENDPOINT = "https://chatapp-backend-2mf4.onrender.com";
-  var socket, selectedChatCompare;
+  const ENDPOINT = "http://localhost:80";
+  var socket = useRef(null),
+    selectedChatCompare;
   const [socketConnected, setSocketConnected] = useState(false);
 
   useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.emit("setup", user.user);
-    socket.on("connected", () => setSocketConnected(true));
-    if (socketConnected) {
-      socket.on("message recieved", (newMessageRecieved) => {
+    socket.current = io(ENDPOINT);
+    socket.current.emit("setup", user.user);
+    socket.current.on("connected", () => setSocketConnected(true));
+  }, []);
+
+  useEffect(() => {
+    fetchMessages();
+    selectedChatCompare = selectedChat;
+    if (selectedChat) localStorage.setItem("compare", selectedChat._id);
+  }, [selectedChat]);
+
+  useEffect(() => {
+    if (socket.current != null) {
+      socket.current.on("message recieved", (newMessageRecieved) => {
         const comp = localStorage.getItem("compare");
         if (comp !== newMessageRecieved.chat._id) {
           if (
@@ -52,27 +62,11 @@ function SingleChat(props) {
             setfetchAgain(!fetchAgain);
           }
         } else if (comp) {
-          console.log("came here");
           setMessages([...messages, newMessageRecieved]);
-          // fetchMessages();
         }
       });
     }
   });
-
-  // useEffect(() => {
-  //   fetchMessages();
-  // }, [messages]);
-
-  useEffect(() => {
-    fetchMessages();
-    selectedChatCompare = selectedChat;
-    if (selectedChat) localStorage.setItem("compare", selectedChat._id);
-  }, [selectedChat]);
-
-  // useEffect(() => {
-
-  // });
 
   const handler = () => {
     setSelectedChat("");
@@ -92,11 +86,10 @@ function SingleChat(props) {
         `/api/message/${selectedChat._id}`,
         config
       );
-
       await setMessages(data);
 
       setLoading(false);
-      socket.emit("join chat", selectedChat._id);
+      socket.current.emit("join chat", selectedChat._id);
     } catch (error) {
       console.log(error);
     }
@@ -111,9 +104,6 @@ function SingleChat(props) {
             Authorization: `Bearer ${user.token}`,
           },
         };
-        // setTimeout(() => {
-        //   console.log("typing");
-        // }, 3000);
 
         const { data } = await axios.post(
           "/api/message/",
@@ -123,10 +113,9 @@ function SingleChat(props) {
           },
           config
         );
-
-        setNewMessages("");
-        socket.emit("new message", data);
+        socket.current.emit("new message", data);
         setMessages([...messages, data]);
+        setNewMessages("");
       }
     } catch (error) {
       toast.error(error);
