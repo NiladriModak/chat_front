@@ -104,9 +104,9 @@ const SideDrawer = () => {
     }
   };
 
-  const accessChats = async (userId) => {
+  const accessChats = async (userId, e) => {
     try {
-      // console.log("jj", userId);
+      // e.preventDefault(); // Prevent default action if event is provided
       setChatloading(true);
       const config = {
         headers: {
@@ -115,26 +115,18 @@ const SideDrawer = () => {
         },
       };
       const { data } = await axios.post("/api/chats", { userId }, config);
-      // console.log("sd=", data, chats);
-      // if (chats.find((c) => c._id === data.fullChat._id)) {
-      //   toast.warning("already there");
-      // } else
+
       if (
-        chats.length == 0 ||
-        (Array.isArray(data.fullChat) &&
-          !chats.find((c) => c._id === data.fullChat[0]._id))
+        !chats.some((c) =>
+          Array.isArray(data.fullChat)
+            ? c._id === data.fullChat[0]._id
+            : c._id === data.fullChat._id
+        )
       ) {
-        await setChats([data.fullChat, ...chats]);
-        if (data) setSelectedChat(data);
-      } else if (
-        chats.length == 0 ||
-        (!Array.isArray(data.fullChat) &&
-          !chats.find((c) => c._id === data.fullChat._id))
-      ) {
-        await setChats([data.fullChat, ...chats]);
-        if (data) setSelectedChat(data);
+        setChats((prevChats) => [data.fullChat, ...prevChats]);
+        setSelectedChat(data.fullChat);
       } else {
-        toast.warning("already there");
+        toast.warning("Chat already exists");
       }
 
       setChatloading(false);
@@ -188,7 +180,7 @@ const SideDrawer = () => {
               <UserListItem
                 key={user._id}
                 user={user}
-                handleFunction={() => accessChats(user._id)}
+                handleFunction={(event) => accessChats(user._id, event)}
               />
             ))}
           </List>

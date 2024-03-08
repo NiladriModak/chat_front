@@ -166,6 +166,7 @@ function SingleChat(props) {
             >
               <ArrowBackIcon />
             </Button>
+            {/* <span>{console.log(selectedChat)}</span> */}
             {!selectedChat.isGroupChat ? (
               <div
                 style={{

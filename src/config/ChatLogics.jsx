@@ -1,7 +1,9 @@
 export const getSender = (loggedUser, users) => {
   // console.log("tuibol1", users);
-  if (!loggedUser || !users || !Array.isArray(users) || users.length < 2) {
-    return "l"; // Return null or handle the edge case as per your requirement
+
+  // console.log(loggedUser, users);
+  if (!loggedUser || !users || users.length < 2) {
+    return "mmmm"; // Return null or handle the edge case as per your requirement
   }
 
   return users[0]._id === loggedUser.user._id ? users[1].name : users[0].name;
