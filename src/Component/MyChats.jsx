@@ -12,8 +12,9 @@ const MyChats = (props) => {
   const { user, setChats, chats, selectedChat, setSelectedChat } = ChatState(); // Removed unused variables
   const [loggedUser, setLoggedUser] = useState();
 
-  const handleClick = (id) => {
-    setSelectedChat(id);
+  const handleClick = (cha) => {
+    setSelectedChat(cha);
+    localStorage.setItem("compare", selectedChat._id);
   };
 
   const fetchChats = async () => {
@@ -91,7 +92,7 @@ const MyChats = (props) => {
               <Box
                 key={chat._id}
                 onClick={() => {
-                  setSelectedChat(chat);
+                  handleClick(chat);
                 }}
                 sx={{
                   cursor: "pointer",

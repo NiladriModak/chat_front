@@ -46,7 +46,11 @@ function SingleChat(props) {
     fetchMessages();
     selectedChatCompare = selectedChat;
 
-    if (selectedChat) localStorage.setItem("compare", selectedChat._id);
+    if (selectedChat) {
+      localStorage.setItem("compare", selectedChat._id);
+    } else {
+      localStorage.removeItem("compare");
+    }
   }, [selectedChat]);
 
   useEffect(() => {
