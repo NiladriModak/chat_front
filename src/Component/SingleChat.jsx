@@ -31,7 +31,7 @@ function SingleChat(props) {
   const isWideScreen = useMediaQuery("(min-width:600px)");
   const { user, selectedChat, setSelectedChat, notification, setNotification } =
     ChatState();
-  const ENDPOINT = "http://localhost:80";
+  const ENDPOINT = "https://chatapp-backend-2mf4.onrender.com";
   var socket = useRef(null),
     selectedChatCompare;
   const [socketConnected, setSocketConnected] = useState(false);
@@ -45,6 +45,7 @@ function SingleChat(props) {
   useEffect(() => {
     fetchMessages();
     selectedChatCompare = selectedChat;
+
     if (selectedChat) localStorage.setItem("compare", selectedChat._id);
   }, [selectedChat]);
 
